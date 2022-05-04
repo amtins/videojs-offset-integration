@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Clipping with videojs-offset plugin</title>
+    <link rel="stylesheet" href="https://unpkg.com/video.js@7.19.2/dist/video-js.css">
+    <script src="https://unpkg.com/video.js@7.19.2/dist/video.js"></script>
+    <script src="https://unpkg.com/videojs-offset/dist/videojs-offset.js"></script>
+    <style>
+        body {
+            display: grid;
+            justify-content: center;
+            background: #222;
+            font-family: sans-serif;
+            color: white;
+        }
+
+        button {
+            padding: 5px 10px;
+        }
+
+        video {
+            width: 640px;
+            height: auto;
+        }
+
+        .content {
+            display: grid;
+            gap: 30px;
+        }
+
+        .video-js .vjs-current-time {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Video clipping with videojs-offset</h1>
+    <div class="content">
+        <h2>Video.js Plugin Integration</h2>
+        <video class="video-js" id="player" controls muted width="640" height="360">
+            <source src="https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8"
+                type="application/x-mpegURL" />
+        </video>
+        <div>
+            <button class="btn-live">load live</button>
+            <button class="btn-full">full</button>
+            <button class="btn-offset1">offSet 1</button>
+            <button class="btn-offset2">offSet 2</button>
+            <button class="btn-reset">Reset offSet</button>
+        </div>
+        <p></p>
+        <script>
+            const btnLive = document.querySelector('.btn-live');
+            const btnFull = document.querySelector('.btn-full');
+            const btnOffset1 = document.querySelector('.btn-offset1');
+            const btnOffset2 = document.querySelector('.btn-offset2');
+            const btnReset = document.querySelector('.btn-reset');
+            const p = document.querySelector('p');
+
+            const bipbop = 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8';
+
+            const player = new videojs('player', {
+                liveui: true,
+                controlBar: {
+                    playToggle: {
+                        replay: true
+                    }
+                }
+            }, () => {
+                p.textContent = 'bipbop full length';
+            });
+
+            btnLive.addEventListener('click', () => {
+                p.textContent = 'Live stream';
+
+                player.src('https://cdn.theoplayer.com/video/big_buck_bunny_encrypted/stream-800/index-dvr.m3u8')
+            });
+
+            btnOffset1.addEventListener('click', () => {
+                p.textContent = 'bipbop starts at 200 ends at 205';
+                player.one('loadeddata', () => {
+
+                    player.offset({
+                        start: 200,
+                        end: 205,
+                        restart_beginning: false
+                    });
+                })
+
+                player.src(bipbop)
+            });
+
+            btnOffset2.addEventListener('click', () => {
+                p.textContent = 'bipbop starts at 200 ends at 249';
+                player.one('loadeddata', () => {
+
+                    player.offset({
+                        start: 200,
+                        end: 249,
+                        restart_beginning: false
+                    });
+                })
+
+                player.src(bipbop)
+            });
+
+            btnFull.addEventListener('click', () => {
+                p.textContent = 'bipbop full length';
+
+                player.src(bipbop)
+            });
+
+            btnReset.addEventListener('click', () => {
+                p.textContent = 'Offset reset';
+
+                player.offset();
+            });
+        </script>
+    </div>
+</body>
+
+</html>
